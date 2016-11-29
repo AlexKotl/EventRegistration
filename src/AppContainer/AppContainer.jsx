@@ -1,10 +1,11 @@
 import React from 'react';
 import 'material-design-lite';
 import 'material-design-lite/material.css';
+import RegistrationForm from './../RegistrationForm/RegistrationForm';
 require( './AppContainer.scss');
 
 /**
- * Page
+ * Common container
  */
 class AppContainer extends React.Component {
     render () {
@@ -15,6 +16,8 @@ class AppContainer extends React.Component {
                     <h1>Register to our event now!</h1>
                     <div className="banner"></div>
                 </div>
+                
+                <RegistrationForm />
             </div>
         );
     }
