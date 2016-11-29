@@ -8,6 +8,14 @@ require( './AppContainer.scss');
  * Common container
  */
 class AppContainer extends React.Component {
+
+    showDialog() {
+        var dialog = document.querySelector('#registrationForm');
+        dialog.showModal();
+
+        // TODO: add dialogPolyfill
+    }
+
     render () {
         return (
             <div className="applicationContainer">
@@ -16,8 +24,14 @@ class AppContainer extends React.Component {
                     <h1>Register to our event now!</h1>
                     <div className="banner"></div>
                 </div>
-                
-                <RegistrationForm />
+
+                <button onClick={this.showDialog} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
+                    Sign Up for Event!
+                </button>
+
+                <dialog className="mdl-dialog" id="registrationForm">
+                    <RegistrationForm />
+                </dialog>
             </div>
         );
     }

@@ -2,6 +2,11 @@ import React from 'react';
 require( './RegistrationForm.scss');
 
 class RegistrationForm extends React.Component {
+    closeDialog() {
+        var dialog = document.querySelector('#registrationForm');
+        dialog.close();
+    }
+
     render () {
         return (
             <div className="registrationForm">
@@ -39,6 +44,9 @@ class RegistrationForm extends React.Component {
                         <tr>
                             <td></td>
                             <td>
+                                <button className="mdl-button mdl-js-button mdl-button--raised" onClick={this.closeDialog} style={{marginRight:'10px'}}>
+                                    Close
+                                </button>
                                 <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
                                     Sign Up for Event!
                                 </button>
