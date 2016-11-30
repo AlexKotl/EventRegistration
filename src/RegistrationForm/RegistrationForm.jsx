@@ -2,9 +2,28 @@ import React from 'react';
 require( './RegistrationForm.scss');
 
 class RegistrationForm extends React.Component {
+    
+    state = {
+        name: '',
+        phone: '',
+        email: ''
+
+    }
+
+    inputChange(event) {
+
+        this.setState({
+            [event.target.name]: event.target.value
+        });
+    }
+
     closeDialog() {
         var dialog = document.querySelector('#registrationForm');
         dialog.close();
+    }
+
+    submitForm() {
+        console.log('submitting', this.state);
     }
 
     render () {
@@ -17,8 +36,8 @@ class RegistrationForm extends React.Component {
                             <td>Your name:</td>
                             <td>
                                 <div className="mdl-textfield mdl-js-textfield">
-                                    <input className="mdl-textfield__input" type="text" id="sample1" />
-                                    <label className="mdl-textfield__label" htmlFor="sample1">Name</label>
+                                    <input className="mdl-textfield__input" type="text" name="name" id="nameInput" onChange={::this.inputChange} />
+                                    <label className="mdl-textfield__label" htmlFor="nameInput">Name</label>
                                 </div>
                             </td>
                         </tr>
@@ -26,8 +45,8 @@ class RegistrationForm extends React.Component {
                             <td>Your phone:</td>
                             <td>
                                 <div className="mdl-textfield mdl-js-textfield">
-                                    <input className="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="sample2"/>
-                                    <label className="mdl-textfield__label" htmlFor="sample2">093 222 33 44</label>
+                                    <input className="mdl-textfield__input" type="text" name="phone" pattern="-?[0-9]*(\.[0-9]+)?" id="phoneInput" onChange={::this.inputChange} />
+                                    <label className="mdl-textfield__label" htmlFor="phoneInput">093 222 33 44</label>
                                     <span className="mdl-textfield__error">Enter phone in correct format!</span>
                                 </div>
                             </td>
@@ -36,8 +55,8 @@ class RegistrationForm extends React.Component {
                             <td>Email address:</td>
                             <td>
                                 <div className="mdl-textfield mdl-js-textfield">
-                                    <input className="mdl-textfield__input" type="text" id="sample1" />
-                                    <label className="mdl-textfield__label" htmlFor="sample1">Text...</label>
+                                    <input className="mdl-textfield__input" type="text" name="email" id="emailInput" onChange={::this.inputChange} />
+                                    <label className="mdl-textfield__label" htmlFor="emailInput">Email address</label>
                                 </div>
                             </td>
                         </tr>
@@ -47,7 +66,7 @@ class RegistrationForm extends React.Component {
                                 <button className="mdl-button mdl-js-button mdl-button--raised" onClick={this.closeDialog} style={{marginRight:'10px'}}>
                                     Close
                                 </button>
-                                <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
+                                <button onClick={::this.submitForm} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
                                     Sign Up for Event!
                                 </button>
                             </td>

@@ -29,6 +29,8 @@ class AppContainer extends React.Component {
                     Sign Up for Event!
                 </button>
 
+                <RegistrationForm />
+                
                 <dialog className="mdl-dialog" id="registrationForm">
                     <RegistrationForm />
                 </dialog>
