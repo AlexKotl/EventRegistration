@@ -5,9 +5,19 @@
     <title>Event Registration</title>
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400&amp;subset=cyrillic" rel="stylesheet">
+
+    <script src="https://apis.google.com/js/client.js?onload=googleLoaded"></script>
+    <script>
+        function googleLoaded() {
+            console.log('google api loaded');
+            document.gapi = gapi;
+        }
+    </script>
 </head>
 <body>
-    <div id="container"></div>
+    <div id="container">
+        Loading...
+    </div>
     <script src="/static/index.js"></script>
 </body>
 </html>

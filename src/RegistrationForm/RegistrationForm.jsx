@@ -1,4 +1,5 @@
 import React from 'react';
+import SheetsApi from './../SheetsApi/SheetsApi.jsx';
 require( './RegistrationForm.scss');
 
 class RegistrationForm extends React.Component {
@@ -17,13 +18,14 @@ class RegistrationForm extends React.Component {
         });
     }
 
-    closeDialog() {
+    static closeDialog() {
         var dialog = document.querySelector('#registrationForm');
         dialog.close();
     }
 
     submitForm() {
-        console.log('submitting', this.state);
+        let sheets = new SheetsApi();
+        sheets.addRow();
     }
 
     render () {
