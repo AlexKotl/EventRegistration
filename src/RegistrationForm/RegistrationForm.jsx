@@ -24,8 +24,23 @@ class RegistrationForm extends React.Component {
     }
 
     submitForm() {
-        let sheets = new SheetsApi();
-        sheets.addRow();
+        let sheets = new SheetsApi(() => {
+            console.log('SHEETS READY');
+
+            sheets.authorize(false, () => {
+                console.log('state',this.state);
+                sheets.addRow([
+                    '',
+                    this.state.name,
+                    this.state.phone,
+                    this.state.email
+                ], r => {
+                    console.log('ROWS ADDED RESULT', r);
+                })
+            });
+
+        });
+
     }
 
     render () {
