@@ -12,4 +12,40 @@
         font-size: 17px;
         font-weight: 300;
     }
+
+    .logos {
+        text-align: center;
+
+
+        .icon {
+            width: 23%;
+            padding-bottom: 13%;
+            margin: 4%;
+            background-size: contain;
+            display: inline-block;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .react {
+            background-image: url(/images/logos/react.png);
+        }
+
+        .flux {
+            background-image: url(/images/logos/flux.png);
+        }
+
+        .responsive {
+            background-image: url(/images/logos/responsive.png);
+        }
+
+        .sass {
+            background-image: url(/images/logos/sass.png);
+        }
+
+        .sheets {
+            background-image: url(/images/logos/sheets.png);
+        }
+
+    }
 }
