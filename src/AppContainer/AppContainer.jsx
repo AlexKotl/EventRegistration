@@ -2,6 +2,7 @@ import React from 'react';
 import 'material-design-lite';
 import 'material-design-lite/material.css';
 import RegistrationForm from './../RegistrationForm/RegistrationForm';
+import EventDescription from './../EventDescription/EventDescription'
 require( './AppContainer.scss');
 
 /**
@@ -21,14 +22,12 @@ class AppContainer extends React.Component {
             <div className="applicationContainer">
                 <div className='applicationHeader'>
                     <img src="/images/logo.png" className="logo" alt="Logo" />
-                    <h1>Register to our event now!</h1>
+                    <h1>GoIT super event!</h1>
                     <div className="banner"></div>
                 </div>
 
-                <button onClick={this.showDialog} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
-                    Sign Up for Event!
-                </button>
-                
+                <EventDescription showDialog={this.showDialog} />
+
                 <dialog className="mdl-dialog" id="registrationForm">
                     <RegistrationForm />
                 </dialog>

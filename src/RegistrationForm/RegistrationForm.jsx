@@ -135,7 +135,7 @@ class RegistrationForm extends React.Component {
 
                 <div className={this.state.formCompleted ? '' : 'hidden'}>
                     <h4>You have been successfully registered to even!</h4>
-                    <div style={{'text-align':'center', 'margin':'20px'}}>
+                    <div style={{'textAlign':'center', 'margin':'20px'}}>
                         <button onClick={::this.closeDialog} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
                             Got it! See you on event.
                         </button>
