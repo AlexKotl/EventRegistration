@@ -3,6 +3,10 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
+.hidden {
+    display: none;
+}
+
 .mdl-dialog {
     min-width:280px;
     width: fit-content;

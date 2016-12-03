@@ -28,8 +28,6 @@ class AppContainer extends React.Component {
                 <button onClick={this.showDialog} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
                     Sign Up for Event!
                 </button>
-
-                <RegistrationForm />
                 
                 <dialog className="mdl-dialog" id="registrationForm">
                     <RegistrationForm />
