@@ -4,26 +4,49 @@ require( './RegistrationForm.scss');
 
 class RegistrationForm extends React.Component {
     
-    state = {
-        name: '',
-        phone: '',
-        email: ''
-
-    }
+    state = {}
 
     inputChange(event) {
-
         this.setState({
             [event.target.name]: event.target.value
         });
     }
 
-    static closeDialog() {
+    closeDialog() {
         var dialog = document.querySelector('#registrationForm');
         dialog.close();
     }
 
+    checkFormFill() {
+        if (this.state.name == '' || this.state.phone == '' || this.state.email == '') {
+            alert('Please, fill up all fields');
+            return false;
+        }
+
+        return true;
+    }
+
+    addSuccess(result) {
+        console.log('User successfully added. ',result);
+
+        this.closeDialog();
+
+        // clean state
+        this.setState({
+            name: '',
+            phone: '',
+            email: ''
+        });
+
+        // reset form inputs
+
+    }
+
     submitForm() {
+        if (!this.checkFormFill()) {
+            return false;
+        }
+
         let sheets = new SheetsApi(() => {
             console.log('SHEETS READY');
 
@@ -34,9 +57,7 @@ class RegistrationForm extends React.Component {
                     this.state.name,
                     this.state.phone,
                     this.state.email
-                ], r => {
-                    console.log('ROWS ADDED RESULT', r);
-                })
+                ], ::this.addSuccess)
             });
 
         });
@@ -53,7 +74,7 @@ class RegistrationForm extends React.Component {
                             <td>Your name:</td>
                             <td>
                                 <div className="mdl-textfield mdl-js-textfield">
-                                    <input className="mdl-textfield__input" type="text" name="name" id="nameInput" onChange={::this.inputChange} />
+                                    <input className="mdl-textfield__input" type="text" name="name" id="nameInput" value={this.state.name} onChange={::this.inputChange} />
                                     <label className="mdl-textfield__label" htmlFor="nameInput">Name</label>
                                 </div>
                             </td>
@@ -62,7 +83,7 @@ class RegistrationForm extends React.Component {
                             <td>Your phone:</td>
                             <td>
                                 <div className="mdl-textfield mdl-js-textfield">
-                                    <input className="mdl-textfield__input" type="text" name="phone" pattern="-?[0-9]*(\.[0-9]+)?" id="phoneInput" onChange={::this.inputChange} />
+                                    <input className="mdl-textfield__input" type="text" name="phone" pattern="-?[0-9]*(\.[0-9]+)?" id="phoneInput" value={this.state.phone} onChange={::this.inputChange} />
                                     <label className="mdl-textfield__label" htmlFor="phoneInput">093 222 33 44</label>
                                     <span className="mdl-textfield__error">Enter phone in correct format!</span>
                                 </div>
@@ -72,7 +93,7 @@ class RegistrationForm extends React.Component {
                             <td>Email address:</td>
                             <td>
                                 <div className="mdl-textfield mdl-js-textfield">
-                                    <input className="mdl-textfield__input" type="text" name="email" id="emailInput" onChange={::this.inputChange} />
+                                    <input className="mdl-textfield__input" type="text" name="email" id="emailInput" value={this.state.email} onChange={::this.inputChange} />
                                     <label className="mdl-textfield__label" htmlFor="emailInput">Email address</label>
                                 </div>
                             </td>

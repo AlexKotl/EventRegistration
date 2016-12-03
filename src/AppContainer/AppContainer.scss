@@ -3,6 +3,11 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
+.mdl-dialog {
+    min-width:280px;
+    width: fit-content;
+}
+
 .applicationContainer {
     background-color: white;
     box-shadow: 0 0 3px grey;
