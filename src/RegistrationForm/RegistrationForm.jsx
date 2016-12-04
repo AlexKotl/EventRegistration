@@ -115,6 +115,19 @@ class RegistrationForm extends React.Component {
                                 </td>
                             </tr>
                             <tr>
+                                <td>Sex:</td>
+                                <td style={{textAlign: 'left'}}>
+                                    <label className="mdl-radio mdl-js-radio mdl-js-ripple-effect" htmlFor="option-1" style={{marginRight: '30px'}}>
+                                        <input type="radio" id="option-1" className="mdl-radio__button" name="options" value="1"  />
+                                        <span className="mdl-radio__label">Male</span>
+                                    </label>
+                                    <label className="mdl-radio mdl-js-radio mdl-js-ripple-effect" htmlFor="option-2">
+                                        <input type="radio" id="option-2" className="mdl-radio__button" name="options" value="2" />
+                                        <span className="mdl-radio__label">Female</span>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td></td>
                                 <td>
                                     <button className="mdl-button mdl-js-button mdl-button--raised" onClick={::this.closeDialog} style={{marginRight:'10px'}}>
