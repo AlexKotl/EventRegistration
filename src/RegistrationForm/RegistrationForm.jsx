@@ -16,6 +16,7 @@ class RegistrationForm extends React.Component {
         this.setState({
             [event.target.name]: event.target.value
         });
+        console.log(this.state);
     }
 
     closeDialog() {
@@ -72,7 +73,9 @@ class RegistrationForm extends React.Component {
                     '',
                     this.state.name,
                     this.state.phone,
-                    this.state.email
+                    this.state.email,
+                    this.state.gender,
+                    localStorage.userToken
                 ], ::this.addSuccess)
             });
 
@@ -118,11 +121,11 @@ class RegistrationForm extends React.Component {
                                 <td>Sex:</td>
                                 <td style={{textAlign: 'left'}}>
                                     <label className="mdl-radio mdl-js-radio mdl-js-ripple-effect" htmlFor="option-1" style={{marginRight: '30px'}}>
-                                        <input type="radio" id="option-1" className="mdl-radio__button" name="options" value="1"  />
+                                        <input type="radio" id="option-1" className="mdl-radio__button" checked="checked" name="gender" value="1" onChange={::this.inputChange} />
                                         <span className="mdl-radio__label">Male</span>
                                     </label>
                                     <label className="mdl-radio mdl-js-radio mdl-js-ripple-effect" htmlFor="option-2">
-                                        <input type="radio" id="option-2" className="mdl-radio__button" name="options" value="2" />
+                                        <input type="radio" id="option-2" className="mdl-radio__button" name="gender" value="2" onChange={::this.inputChange} />
                                         <span className="mdl-radio__label">Female</span>
                                     </label>
                                 </td>
