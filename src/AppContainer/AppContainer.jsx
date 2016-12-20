@@ -10,6 +10,20 @@ require( './AppContainer.scss');
  */
 class AppContainer extends React.Component {
 
+    generateToken() {
+        return Math.random().toString(36).substring(10);
+    }
+
+    componentDidMount() {
+        if (localStorage.userToken === undefined) {
+            localStorage.userToken = this.generateToken();
+            console.log('set new token');
+        }
+        else {
+            console.log("User token: ", localStorage.userToken);
+        }
+    }
+
     showDialog() {
         var dialog = document.querySelector('#registrationForm');
         dialog.showModal();
