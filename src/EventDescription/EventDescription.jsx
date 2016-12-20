@@ -1,4 +1,5 @@
 import React from 'react';
+import MembersList from './../MembersList/MembersList.jsx';
 
 require( './EventDescription.scss');
 
@@ -52,7 +53,10 @@ export default class EventDescription extends React.Component {
                 <p/>Don't waste your time! Try all these cool features right now with this cool button:
 
                 <p/>
-                <button onClick={this.props.showDialog} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
+                <MembersList />
+
+                <p/>
+                <button onClick={this.props.showDialog} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent add-button">
                     Sign Up for Event!
                 </button>
 
