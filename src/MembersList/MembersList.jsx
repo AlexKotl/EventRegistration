@@ -6,7 +6,12 @@ require( './MembersList.scss');
 export default class MembersList extends React.Component {
 
     componentDidMount() {
-        console.log('mounted');
+        var api = new SheetsApi(() => {
+            console.log('api INITED');
+            api.getAllData(data => {
+                console.log("Data get: ", data);
+            });
+        });
     }
   
     render() {
