@@ -1,23 +1,23 @@
 import MicroEvent from 'microevent';
-import {AppActions} from 'src/App/AppActions.js';
+import {AppActions} from './AppActions.js';
 
 var AppStore = new MicroEvent();
-AppStore.comments = {};
+AppStore.users = {};
 
 AppActions.iDispatcher.register(function (payload) {
     console.log('AppStore register event', payload.eventName);
     switch (payload.eventName) {
-        case 'get-articles':
-            AppStore.articles = payload.data;
-            AppStore.trigger('putArticles');
+        case 'get-users':
+            AppStore.users = payload.data;
+            //AppStore.trigger('putArticles');
             break;
-        case 'add-comment':
-            AppStore.comments[payload.data.id] = payload.data;
-            AppStore.trigger('refreshComments');
+        case 'add-user':
+            AppStore.users[payload.data[0]] = payload.data;
+            //AppStore.trigger('refreshComments');
             break;
-        case 'change-filter':
-            AppStore.currentFilter = payload.data;
-            AppStore.trigger('changeFilter');
+        case 'remove-user':
+            delete AppStore.users[payload.data];
+            AppStore.trigger('refreshUsers');
             break;
     }
 

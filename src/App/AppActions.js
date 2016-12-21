@@ -4,28 +4,29 @@ import {Dispatcher} from 'flux';
 var iDispatcher = new Dispatcher();
 
 var AppActions = {
-    getArticles: function (articles) {
-        console.log('AppActions dispatch getArticles');
+    getUsers: function (users) {
+        console.log('AppActions dispatch getUsers');
         iDispatcher.dispatch({
-            eventName: 'get-articles',
-            data: articles
+            eventName: 'get-users',
+            data: users
         });
     },
 
-    addCommentStore: function (comment) {
+    addUserStore: function (user) {
+        console.log('Dispatching add-user event');
         iDispatcher.dispatch({
-            eventName: 'add-comment',
-            data: comment
+            eventName: 'add-user',
+            data: user
         });
     },
     
-    changeFilter: function(filter) {
-        console.log('Dispatched changeFilter');
+    removeUserStore: function(user_id) {
         iDispatcher.dispatch({
-            eventName: 'change-filter',
-            data: filter
-        });
+            eventName: 'remove-user',
+            data: user_id
+        })
     }
+    
 };
 
 module.exports.AppActions = AppActions;

@@ -53,6 +53,10 @@ class RegistrationForm extends React.Component {
 
     }
 
+    generateId() {
+        return Math.random().toString(36).substring(16);
+    }
+
     submitForm() {
 
         if (!this.checkFormFill()) {
@@ -69,7 +73,7 @@ class RegistrationForm extends React.Component {
             sheets.authorize(false, () => {
                 console.log('state',this.state);
                 sheets.addRow([
-                    '',
+                    this.generateId(),
                     this.state.name,
                     this.state.phone,
                     this.state.email,
