@@ -8,7 +8,7 @@ module.exports = {
         './App/App.jsx'
     ],
     output: {
-        path: path.join(__dirname, 'static'),
+        path: path.join(__dirname, 'build'),
         filename: 'index.js',
         publicPath: '/static/'
     },

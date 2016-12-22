@@ -27142,7 +27142,7 @@
 	
 	var _RegistrationForm2 = _interopRequireDefault(_RegistrationForm);
 	
-	var _EventDescription = __webpack_require__(252);
+	var _EventDescription = __webpack_require__(259);
 	
 	var _EventDescription2 = _interopRequireDefault(_EventDescription);
 	
@@ -27154,7 +27154,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(259);
+	__webpack_require__(266);
 	
 	/**
 	 * Common container
@@ -27608,6 +27608,12 @@
 	
 	var _SheetsApi2 = _interopRequireDefault(_SheetsApi);
 	
+	var _AppActions = __webpack_require__(250);
+	
+	var _AppStore = __webpack_require__(254);
+	
+	var _AppStore2 = _interopRequireDefault(_AppStore);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -27618,7 +27624,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(250);
+	__webpack_require__(257);
 	
 	var RegistrationForm = function (_React$Component) {
 	    _inherits(RegistrationForm, _React$Component);
@@ -27683,6 +27689,15 @@
 	                phone: '',
 	                email: ''
 	            });
+	
+	            // update store
+	            _AppActions.AppActions.addUserStore(this.state.lastUserData);
+	            _AppStore2.default.trigger('refreshUsers');
+	        }
+	    }, {
+	        key: 'generateId',
+	        value: function generateId() {
+	            return Math.random().toString(36).substring(16);
 	        }
 	    }, {
 	        key: 'submitForm',
@@ -27700,9 +27715,13 @@
 	            var sheets = new _SheetsApi2.default(function () {
 	                console.log('SHEETS READY');
 	
+	                _this2.setState({
+	                    lastUserData: [_this2.generateId(), _this2.state.name, _this2.state.phone, _this2.state.email, _this2.state.gender, localStorage.userToken]
+	                });
+	
 	                sheets.authorize(false, function () {
 	                    console.log('state', _this2.state);
-	                    sheets.addRow(['', _this2.state.name, _this2.state.phone, _this2.state.email, _this2.state.gender, localStorage.userToken], _this2.addSuccess.bind(_this2));
+	                    sheets.addRow(_this2.state.lastUserData, _this2.addSuccess.bind(_this2));
 	                });
 	            });
 	        }
@@ -27717,7 +27736,7 @@
 	                    { className: this.state.formCompleted || this.state.loading ? 'hidden' : '' },
 	                    _react2.default.createElement(
 	                        'table',
-	                        { className: 'mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp' },
+	                        { className: 'mdl-data-table mdl-js-data-table mdl-shadow--2dp' },
 	                        _react2.default.createElement(
 	                            'tbody',
 	                            null,
@@ -27809,7 +27828,7 @@
 	                                    _react2.default.createElement(
 	                                        'label',
 	                                        { className: 'mdl-radio mdl-js-radio mdl-js-ripple-effect', htmlFor: 'option-1', style: { marginRight: '30px' } },
-	                                        _react2.default.createElement('input', { type: 'radio', id: 'option-1', className: 'mdl-radio__button', checked: 'checked', name: 'gender', value: '1', onChange: this.inputChange.bind(this) }),
+	                                        _react2.default.createElement('input', { type: 'radio', id: 'option-1', className: 'mdl-radio__button', name: 'gender', value: '1', onChange: this.inputChange.bind(this) }),
 	                                        _react2.default.createElement(
 	                                            'span',
 	                                            { className: 'mdl-radio__label' },
@@ -27976,6 +27995,28 @@
 	                console.log('Error while writing values to Sheets: ', response.result.error.message);
 	            });
 	        }
+	    }, {
+	        key: 'deleteRow',
+	        value: function deleteRow(colNo, callback) {
+	            colNo = parseInt(colNo);
+	
+	            if (colNo === 0) {
+	                console.error('Column cannot be ', colNo);
+	                return false;
+	            }
+	
+	            gapi.client.sheets.spreadsheets.values.update({
+	                spreadsheetId: this.config.SPREADSHEET_ID,
+	                range: 'Users!F' + colNo + ':F' + colNo,
+	                majorDimension: "ROWS",
+	                valueInputOption: 'RAW',
+	                values: [['deleted']]
+	            }).then(function (response) {
+	                callback(response);
+	            }, function (response) {
+	                console.log('Error while deleting value in Sheets: ', response.result.error.message);
+	            });
+	        }
 	    }]);
 	
 	    return SheetsApi;
@@ -27987,10 +28028,473 @@
 /* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+	
+	var _flux = __webpack_require__(251);
+	
+	var iDispatcher = new _flux.Dispatcher();
+	
+	var AppActions = {
+	    getUsers: function getUsers(users) {
+	        console.log('AppActions dispatch getUsers');
+	        iDispatcher.dispatch({
+	            eventName: 'get-users',
+	            data: users
+	        });
+	    },
+	
+	    addUserStore: function addUserStore(user) {
+	        console.log('Dispatching add-user event');
+	        iDispatcher.dispatch({
+	            eventName: 'add-user',
+	            data: user
+	        });
+	    },
+	
+	    removeUserStore: function removeUserStore(user_id) {
+	        iDispatcher.dispatch({
+	            eventName: 'remove-user',
+	            data: user_id
+	        });
+	    }
+	
+	};
+	
+	module.exports.AppActions = AppActions;
+	module.exports.AppActions.iDispatcher = iDispatcher;
+
+/***/ },
+/* 251 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+	
+	module.exports.Dispatcher = __webpack_require__(252);
+
+
+/***/ },
+/* 252 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule Dispatcher
+	 * 
+	 * @preventMunge
+	 */
+	
+	'use strict';
+	
+	exports.__esModule = true;
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var invariant = __webpack_require__(253);
+	
+	var _prefix = 'ID_';
+	
+	/**
+	 * Dispatcher is used to broadcast payloads to registered callbacks. This is
+	 * different from generic pub-sub systems in two ways:
+	 *
+	 *   1) Callbacks are not subscribed to particular events. Every payload is
+	 *      dispatched to every registered callback.
+	 *   2) Callbacks can be deferred in whole or part until other callbacks have
+	 *      been executed.
+	 *
+	 * For example, consider this hypothetical flight destination form, which
+	 * selects a default city when a country is selected:
+	 *
+	 *   var flightDispatcher = new Dispatcher();
+	 *
+	 *   // Keeps track of which country is selected
+	 *   var CountryStore = {country: null};
+	 *
+	 *   // Keeps track of which city is selected
+	 *   var CityStore = {city: null};
+	 *
+	 *   // Keeps track of the base flight price of the selected city
+	 *   var FlightPriceStore = {price: null}
+	 *
+	 * When a user changes the selected city, we dispatch the payload:
+	 *
+	 *   flightDispatcher.dispatch({
+	 *     actionType: 'city-update',
+	 *     selectedCity: 'paris'
+	 *   });
+	 *
+	 * This payload is digested by `CityStore`:
+	 *
+	 *   flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'city-update') {
+	 *       CityStore.city = payload.selectedCity;
+	 *     }
+	 *   });
+	 *
+	 * When the user selects a country, we dispatch the payload:
+	 *
+	 *   flightDispatcher.dispatch({
+	 *     actionType: 'country-update',
+	 *     selectedCountry: 'australia'
+	 *   });
+	 *
+	 * This payload is digested by both stores:
+	 *
+	 *   CountryStore.dispatchToken = flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'country-update') {
+	 *       CountryStore.country = payload.selectedCountry;
+	 *     }
+	 *   });
+	 *
+	 * When the callback to update `CountryStore` is registered, we save a reference
+	 * to the returned token. Using this token with `waitFor()`, we can guarantee
+	 * that `CountryStore` is updated before the callback that updates `CityStore`
+	 * needs to query its data.
+	 *
+	 *   CityStore.dispatchToken = flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'country-update') {
+	 *       // `CountryStore.country` may not be updated.
+	 *       flightDispatcher.waitFor([CountryStore.dispatchToken]);
+	 *       // `CountryStore.country` is now guaranteed to be updated.
+	 *
+	 *       // Select the default city for the new country
+	 *       CityStore.city = getDefaultCityForCountry(CountryStore.country);
+	 *     }
+	 *   });
+	 *
+	 * The usage of `waitFor()` can be chained, for example:
+	 *
+	 *   FlightPriceStore.dispatchToken =
+	 *     flightDispatcher.register(function(payload) {
+	 *       switch (payload.actionType) {
+	 *         case 'country-update':
+	 *         case 'city-update':
+	 *           flightDispatcher.waitFor([CityStore.dispatchToken]);
+	 *           FlightPriceStore.price =
+	 *             getFlightPriceStore(CountryStore.country, CityStore.city);
+	 *           break;
+	 *     }
+	 *   });
+	 *
+	 * The `country-update` payload will be guaranteed to invoke the stores'
+	 * registered callbacks in order: `CountryStore`, `CityStore`, then
+	 * `FlightPriceStore`.
+	 */
+	
+	var Dispatcher = (function () {
+	  function Dispatcher() {
+	    _classCallCheck(this, Dispatcher);
+	
+	    this._callbacks = {};
+	    this._isDispatching = false;
+	    this._isHandled = {};
+	    this._isPending = {};
+	    this._lastID = 1;
+	  }
+	
+	  /**
+	   * Registers a callback to be invoked with every dispatched payload. Returns
+	   * a token that can be used with `waitFor()`.
+	   */
+	
+	  Dispatcher.prototype.register = function register(callback) {
+	    var id = _prefix + this._lastID++;
+	    this._callbacks[id] = callback;
+	    return id;
+	  };
+	
+	  /**
+	   * Removes a callback based on its token.
+	   */
+	
+	  Dispatcher.prototype.unregister = function unregister(id) {
+	    !this._callbacks[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.unregister(...): `%s` does not map to a registered callback.', id) : invariant(false) : undefined;
+	    delete this._callbacks[id];
+	  };
+	
+	  /**
+	   * Waits for the callbacks specified to be invoked before continuing execution
+	   * of the current callback. This method should only be used by a callback in
+	   * response to a dispatched payload.
+	   */
+	
+	  Dispatcher.prototype.waitFor = function waitFor(ids) {
+	    !this._isDispatching ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): Must be invoked while dispatching.') : invariant(false) : undefined;
+	    for (var ii = 0; ii < ids.length; ii++) {
+	      var id = ids[ii];
+	      if (this._isPending[id]) {
+	        !this._isHandled[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): Circular dependency detected while ' + 'waiting for `%s`.', id) : invariant(false) : undefined;
+	        continue;
+	      }
+	      !this._callbacks[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): `%s` does not map to a registered callback.', id) : invariant(false) : undefined;
+	      this._invokeCallback(id);
+	    }
+	  };
+	
+	  /**
+	   * Dispatches a payload to all registered callbacks.
+	   */
+	
+	  Dispatcher.prototype.dispatch = function dispatch(payload) {
+	    !!this._isDispatching ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.') : invariant(false) : undefined;
+	    this._startDispatching(payload);
+	    try {
+	      for (var id in this._callbacks) {
+	        if (this._isPending[id]) {
+	          continue;
+	        }
+	        this._invokeCallback(id);
+	      }
+	    } finally {
+	      this._stopDispatching();
+	    }
+	  };
+	
+	  /**
+	   * Is this Dispatcher currently dispatching.
+	   */
+	
+	  Dispatcher.prototype.isDispatching = function isDispatching() {
+	    return this._isDispatching;
+	  };
+	
+	  /**
+	   * Call the callback stored with the given id. Also do some internal
+	   * bookkeeping.
+	   *
+	   * @internal
+	   */
+	
+	  Dispatcher.prototype._invokeCallback = function _invokeCallback(id) {
+	    this._isPending[id] = true;
+	    this._callbacks[id](this._pendingPayload);
+	    this._isHandled[id] = true;
+	  };
+	
+	  /**
+	   * Set up bookkeeping needed when dispatching.
+	   *
+	   * @internal
+	   */
+	
+	  Dispatcher.prototype._startDispatching = function _startDispatching(payload) {
+	    for (var id in this._callbacks) {
+	      this._isPending[id] = false;
+	      this._isHandled[id] = false;
+	    }
+	    this._pendingPayload = payload;
+	    this._isDispatching = true;
+	  };
+	
+	  /**
+	   * Clear bookkeeping used for dispatching.
+	   *
+	   * @internal
+	   */
+	
+	  Dispatcher.prototype._stopDispatching = function _stopDispatching() {
+	    delete this._pendingPayload;
+	    this._isDispatching = false;
+	  };
+	
+	  return Dispatcher;
+	})();
+	
+	module.exports = Dispatcher;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 253 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule invariant
+	 */
+	
+	"use strict";
+	
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+	
+	var invariant = function (condition, format, a, b, c, d, e, f) {
+	  if (process.env.NODE_ENV !== 'production') {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+	  }
+	
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error('Invariant Violation: ' + format.replace(/%s/g, function () {
+	        return args[argIndex++];
+	      }));
+	    }
+	
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	};
+	
+	module.exports = invariant;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _microevent = __webpack_require__(255);
+	
+	var _microevent2 = _interopRequireDefault(_microevent);
+	
+	var _AppActions = __webpack_require__(250);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var AppStore = new _microevent2.default();
+	AppStore.users = {};
+	
+	_AppActions.AppActions.iDispatcher.register(function (payload) {
+	    console.log('AppStore register event', payload.eventName);
+	    switch (payload.eventName) {
+	        case 'get-users':
+	            AppStore.users = payload.data;
+	            //AppStore.trigger('putArticles');
+	            break;
+	        case 'add-user':
+	            AppStore.users[payload.data[0]] = payload.data;
+	            //AppStore.trigger('refreshComments');
+	            break;
+	        case 'remove-user':
+	            delete AppStore.users[payload.data];
+	            AppStore.trigger('refreshUsers');
+	            break;
+	    }
+	
+	    return true;
+	});
+	
+	exports.default = AppStore;
+
+/***/ },
+/* 255 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(module) {/**
+	 * MicroEvent - to make any js object an event emitter (server or browser)
+	 * 
+	 * - pure javascript - server compatible, browser compatible
+	 * - dont rely on the browser doms
+	 * - super simple - you get it immediatly, no mistery, no magic involved
+	 *
+	 * - create a MicroEventDebug with goodies to debug
+	 *   - make it safer to use
+	*/
+	
+	var MicroEvent	= function(){}
+	MicroEvent.prototype	= {
+		bind	: function(event, fct){
+			this._events = this._events || {};
+			this._events[event] = this._events[event]	|| [];
+			this._events[event].push(fct);
+		},
+		unbind	: function(event, fct){
+			this._events = this._events || {};
+			if( event in this._events === false  )	return;
+			this._events[event].splice(this._events[event].indexOf(fct), 1);
+		},
+		trigger	: function(event /* , args... */){
+			this._events = this._events || {};
+			if( event in this._events === false  )	return;
+			for(var i = 0; i < this._events[event].length; i++){
+				this._events[event][i].apply(this, Array.prototype.slice.call(arguments, 1))
+			}
+		}
+	};
+	
+	/**
+	 * mixin will delegate all MicroEvent.js function in the destination object
+	 *
+	 * - require('MicroEvent').mixin(Foobar) will make Foobar able to use MicroEvent
+	 *
+	 * @param {Object} the object which will support MicroEvent
+	*/
+	MicroEvent.mixin	= function(destObject){
+		var props	= ['bind', 'unbind', 'trigger'];
+		for(var i = 0; i < props.length; i ++){
+			destObject.prototype[props[i]]	= MicroEvent.prototype[props[i]];
+		}
+	}
+	
+	// export in common js
+	if( typeof module !== "undefined" && ('exports' in module)){
+		module.exports	= MicroEvent
+	}
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(256)(module)))
+
+/***/ },
+/* 256 */
+/***/ function(module, exports) {
+
+	module.exports = function(module) {
+		if(!module.webpackPolyfill) {
+			module.deprecate = function() {};
+			module.paths = [];
+			// module.parent = undefined by default
+			module.children = [];
+			module.webpackPolyfill = 1;
+		}
+		return module;
+	}
+
+
+/***/ },
+/* 257 */
+/***/ function(module, exports, __webpack_require__) {
+
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(251);
+	var content = __webpack_require__(258);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(247)(content, {});
@@ -28010,7 +28514,7 @@
 	}
 
 /***/ },
-/* 251 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(246)();
@@ -28024,7 +28528,7 @@
 
 
 /***/ },
-/* 252 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28039,7 +28543,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _MembersList = __webpack_require__(253);
+	var _MembersList = __webpack_require__(260);
 	
 	var _MembersList2 = _interopRequireDefault(_MembersList);
 	
@@ -28051,7 +28555,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(257);
+	__webpack_require__(264);
 	
 	/**
 	 * Text page with description and sign up button
@@ -28164,7 +28668,7 @@
 	                _react2.default.createElement('p', null),
 	                'Don\'t waste your time! Try all these cool features right now with this cool button:',
 	                _react2.default.createElement('p', null),
-	                _react2.default.createElement(_MembersList2.default, null),
+	                gapi.auth !== undefined ? _react2.default.createElement(_MembersList2.default, null) : '',
 	                _react2.default.createElement('p', null),
 	                _react2.default.createElement(
 	                    'button',
@@ -28197,7 +28701,7 @@
 	exports.default = EventDescription;
 
 /***/ },
-/* 253 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28216,9 +28720,15 @@
 	
 	var _SheetsApi2 = _interopRequireDefault(_SheetsApi);
 	
-	var _MembersRow = __webpack_require__(254);
+	var _MembersRow = __webpack_require__(261);
 	
 	var _MembersRow2 = _interopRequireDefault(_MembersRow);
+	
+	var _AppStore = __webpack_require__(254);
+	
+	var _AppStore2 = _interopRequireDefault(_AppStore);
+	
+	var _AppActions = __webpack_require__(250);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -28228,7 +28738,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	__webpack_require__(255);
+	__webpack_require__(262);
 	
 	var MembersList = function (_React$Component) {
 	    _inherits(MembersList, _React$Component);
@@ -28251,27 +28761,50 @@
 	    }
 	
 	    _createClass(MembersList, [{
+	        key: 'refreshUsers',
+	        value: function refreshUsers() {
+	            console.log('setting new store ', _AppStore2.default.users);
+	            this.setState({
+	                //items:
+	            });
+	        }
+	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 	            var _this2 = this;
 	
 	            var api = new _SheetsApi2.default(function () {
-	                console.log('api INITED');
+	                var col_no = 0;
 	                api.getAllData(function (data) {
-	                    var rows = data.filter(function (el) {
-	                        return el[5] === localStorage.userToken;
+	                    data.filter(function (user) {
+	                        col_no++;
+	                        user[10] = col_no; // save col number for further API calls
+	
+	                        if (user[5] === localStorage.userToken) {
+	                            _AppActions.AppActions.addUserStore(user);
+	                            return true;
+	                        }
 	                    });
 	
 	                    _this2.setState({
-	                        items: rows,
+	                        items: _AppStore2.default.users,
 	                        loaded: true
 	                    });
 	                });
 	            });
+	
+	            // bind store action
+	            _AppStore2.default.bind('refreshUsers', this.refreshUsers.bind(this));
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            _AppStore2.default.bind('refreshUsers', this.refreshUsers.bind(this));
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var _this3 = this;
 	
 	            var n = 0;
 	
@@ -28285,7 +28818,7 @@
 	                ),
 	                _react2.default.createElement(
 	                    'table',
-	                    { className: 'mdl-data-table mdl-shadow--2dp', style: { width: '100%', display: this.state.items.length > 0 ? '' : 'none' } },
+	                    { className: 'membersList mdl-data-table mdl-shadow--2dp', style: { width: '100%', display: Object.keys(this.state.items).length > 0 ? '' : 'none' } },
 	                    _react2.default.createElement(
 	                        'thead',
 	                        null,
@@ -28295,7 +28828,7 @@
 	                            _react2.default.createElement(
 	                                'th',
 	                                null,
-	                                'N'
+	                                '#'
 	                            ),
 	                            _react2.default.createElement(
 	                                'th',
@@ -28322,9 +28855,11 @@
 	                    _react2.default.createElement(
 	                        'tbody',
 	                        null,
-	                        this.state.items.map(function (el) {
+	                        Object.keys(this.state.items).map(function (key) {
 	                            n++;
-	                            return _react2.default.createElement(_MembersRow2.default, { key: 'member_' + n, num: n, userName: el[1], phone: el[2], email: el[3], gender: el[4] });
+	                            var el = _this3.state.items[key];
+	                            console.log('rendering', key, el);
+	                            return _react2.default.createElement(_MembersRow2.default, { key: 'member_' + n, num: n, userId: el[0], userName: el[1], phone: el[3], email: el[2], gender: el[4], colNo: el[10] });
 	                        })
 	                    )
 	                )
@@ -28338,10 +28873,10 @@
 	exports.default = MembersList;
 
 /***/ },
-/* 254 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -28352,6 +28887,12 @@
 	var _react = __webpack_require__(2);
 	
 	var _react2 = _interopRequireDefault(_react);
+	
+	var _SheetsApi = __webpack_require__(249);
+	
+	var _SheetsApi2 = _interopRequireDefault(_SheetsApi);
+	
+	var _AppActions = __webpack_require__(250);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -28365,56 +28906,78 @@
 	    _inherits(MembersRow, _React$Component);
 	
 	    function MembersRow() {
+	        var _ref;
+	
+	        var _temp, _this, _ret;
+	
 	        _classCallCheck(this, MembersRow);
 	
-	        return _possibleConstructorReturn(this, (MembersRow.__proto__ || Object.getPrototypeOf(MembersRow)).apply(this, arguments));
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+	
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = MembersRow.__proto__ || Object.getPrototypeOf(MembersRow)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+	            processing: false
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 	
 	    _createClass(MembersRow, [{
-	        key: "render",
+	        key: 'removeUser',
+	        value: function removeUser() {
+	            var _this2 = this;
+	
+	            console.log('Removing user ', this.props.userId);
+	
+	            this.setState({
+	                processing: true
+	            });
+	
+	            var api = new _SheetsApi2.default(function () {
+	                api.deleteRow(_this2.props.colNo, function () {
+	                    _AppActions.AppActions.removeUserStore(_this2.props.userId);
+	
+	                    _this2.setState({
+	                        processing: false
+	                    });
+	                });
+	            });
+	        }
+	    }, {
+	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
-	                "tr",
-	                null,
+	                'tr',
+	                { className: this.state.processing ? 'loading' : '' },
 	                _react2.default.createElement(
-	                    "td",
+	                    'td',
 	                    null,
 	                    this.props.num
 	                ),
 	                _react2.default.createElement(
-	                    "td",
+	                    'td',
 	                    null,
 	                    this.props.userName
 	                ),
 	                _react2.default.createElement(
-	                    "td",
+	                    'td',
 	                    null,
 	                    this.props.phone
 	                ),
 	                _react2.default.createElement(
-	                    "td",
+	                    'td',
 	                    null,
 	                    this.props.email
 	                ),
 	                _react2.default.createElement(
-	                    "td",
+	                    'td',
 	                    null,
 	                    _react2.default.createElement(
-	                        "button",
-	                        { className: "mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored" },
+	                        'button',
+	                        { className: 'mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored', onClick: this.removeUser.bind(this), title: 'Remove' },
 	                        _react2.default.createElement(
-	                            "i",
-	                            { className: "material-icons" },
-	                            "edit"
-	                        )
-	                    ),
-	                    _react2.default.createElement(
-	                        "button",
-	                        { className: "mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" },
-	                        _react2.default.createElement(
-	                            "i",
-	                            { className: "material-icons" },
-	                            "delete"
+	                            'i',
+	                            { className: 'material-icons' },
+	                            'delete'
 	                        )
 	                    )
 	                )
@@ -28428,13 +28991,13 @@
 	exports.default = MembersRow;
 
 /***/ },
-/* 255 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(256);
+	var content = __webpack_require__(263);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(247)(content, {});
@@ -28454,7 +29017,7 @@
 	}
 
 /***/ },
-/* 256 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(246)();
@@ -28462,19 +29025,19 @@
 	
 	
 	// module
-	exports.push([module.id, "", ""]);
+	exports.push([module.id, ".membersList tr.loading {\n  opacity: 0.3; }\n", ""]);
 	
 	// exports
 
 
 /***/ },
-/* 257 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(258);
+	var content = __webpack_require__(265);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(247)(content, {});
@@ -28494,7 +29057,7 @@
 	}
 
 /***/ },
-/* 258 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(246)();
@@ -28508,13 +29071,13 @@
 
 
 /***/ },
-/* 259 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(260);
+	var content = __webpack_require__(267);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(247)(content, {});
@@ -28534,7 +29097,7 @@
 	}
 
 /***/ },
-/* 260 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(246)();
