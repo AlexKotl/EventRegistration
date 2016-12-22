@@ -77,7 +77,7 @@ export default class MembersList extends React.Component {
                             n++;
                             let el = this.state.items[key];
                             console.log('rendering', key, el);
-                            return <MembersRow key={'member_' + n} num={n} userId={el[0]} userName={el[1]} phone={el[2]}  email={el[3]}  gender={el[4]} colNo={el[10]} />
+                            return <MembersRow key={'member_' + n} num={n} userId={el[0]} userName={el[1]} phone={el[3]}  email={el[2]}  gender={el[4]} colNo={el[10]} />
                         })}
                     </tbody>
                 </table>
