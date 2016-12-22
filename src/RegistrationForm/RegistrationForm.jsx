@@ -1,6 +1,9 @@
 import React from 'react';
 import SheetsApi from './../SheetsApi/SheetsApi.jsx';
+import {AppActions} from './../App/AppActions';
+import AppStore from './../App/AppStore';
 require( './RegistrationForm.scss');
+
 
 class RegistrationForm extends React.Component {
     
@@ -51,6 +54,10 @@ class RegistrationForm extends React.Component {
             email: ''
         });
 
+        // update store
+        AppActions.addUserStore(this.state.lastUserData);
+        AppStore.trigger('refreshUsers');
+
     }
 
     generateId() {
@@ -70,16 +77,20 @@ class RegistrationForm extends React.Component {
         let sheets = new SheetsApi(() => {
             console.log('SHEETS READY');
 
-            sheets.authorize(false, () => {
-                console.log('state',this.state);
-                sheets.addRow([
+            this.setState({
+                lastUserData: [
                     this.generateId(),
                     this.state.name,
                     this.state.phone,
                     this.state.email,
                     this.state.gender,
                     localStorage.userToken
-                ], ::this.addSuccess)
+                ]
+            });
+
+            sheets.authorize(false, () => {
+                console.log('state',this.state);
+                sheets.addRow(this.state.lastUserData, ::this.addSuccess)
             });
 
         });
