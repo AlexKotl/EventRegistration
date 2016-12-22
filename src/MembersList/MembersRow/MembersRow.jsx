@@ -1,19 +1,37 @@
 import React from 'react';
+import SheetsApi from './../../SheetsApi/SheetsApi.jsx';
 import AppStore from './../../App/AppStore';
 import {AppActions} from './../../App/AppActions';
 
 export default class MembersRow extends React.Component {
 
+    state = {
+        processing: false
+    }
+    
     removeUser() {
         console.log('Removing user ',this.props.userId);
-        AppActions.removeUserStore(this.props.userId);
-        //console.log('after delete', AppStore.users);
+
+        this.setState({
+            processing: true
+        })
+        
+        let api = new SheetsApi(() => {
+            api.deleteRow(this.props.colNo, () => {
+                AppActions.removeUserStore(this.props.userId);
+
+                this.setState({
+                    processing: false
+                })
+            });
+        });
+
     }
 
     render() {
         return (
            
-            <tr>
+            <tr className={this.state.processing ? 'loading' : ''}>
                 <td>
                     {this.props.num}
                 </td>

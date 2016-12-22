@@ -22,16 +22,17 @@ export default class MembersList extends React.Component {
 
     componentDidMount() {
         var api = new SheetsApi(() => {
-            console.log('api INITED');
+            let col_no = 0;
             api.getAllData(data => {
-                const rows = data.filter(user => {
+                data.filter(user => {
+                    col_no++;
+                    user[10] = col_no; // save col number for further API calls
+
                     if (user[5] === localStorage.userToken) {
                         AppActions.addUserStore(user);
                         return true;
                     }
                 });
-
-                console.log('data: ', AppStore.users);
 
                 this.setState({
                     items: AppStore.users,
@@ -58,7 +59,7 @@ export default class MembersList extends React.Component {
                     <div className="mdl-spinner mdl-js-spinner is-active"></div>
                 </div>
 
-                <table className="mdl-data-table mdl-shadow--2dp" style={{width: '100%', display: Object.keys(this.state.items).length>0 ? '' : 'none'}}>
+                <table className="membersList mdl-data-table mdl-shadow--2dp" style={{width: '100%', display: Object.keys(this.state.items).length>0 ? '' : 'none'}}>
                     <thead>
                         <tr>
                             <th>#</th>
@@ -76,7 +77,7 @@ export default class MembersList extends React.Component {
                             n++;
                             let el = this.state.items[key];
                             console.log('rendering', key, el);
-                            return <MembersRow key={'member_' + n} num={n} userId={el[0]} userName={el[1]} phone={el[2]}  email={el[3]}  gender={el[4]} />
+                            return <MembersRow key={'member_' + n} num={n} userId={el[0]} userName={el[1]} phone={el[2]}  email={el[3]}  gender={el[4]} colNo={el[10]} />
                         })}
                     </tbody>
                 </table>

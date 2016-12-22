@@ -75,4 +75,27 @@ export default class SheetsApi {
             console.log('Error while writing values to Sheets: ', response.result.error.message);
         });
     }
+
+    deleteRow(colNo, callback) {
+        colNo = parseInt(colNo);
+
+        if (colNo === 0) {
+            console.error('Column cannot be ', colNo);
+            return false;
+        }
+
+        gapi.client.sheets.spreadsheets.values.update({
+            spreadsheetId: this.config.SPREADSHEET_ID,
+            range: `Users!F${ colNo }:F${ colNo }`,
+            majorDimension: "ROWS",
+            valueInputOption: 'RAW',
+            values: [
+                ['deleted']
+            ]
+        }).then(response => {
+            callback(response);
+        }, response => {
+            console.log('Error while deleting value in Sheets: ', response.result.error.message);
+        });
+    }
 }
