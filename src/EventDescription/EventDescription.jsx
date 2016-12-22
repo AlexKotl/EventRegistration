@@ -53,7 +53,8 @@ export default class EventDescription extends React.Component {
                 <p/>Don't waste your time! Try all these cool features right now with this cool button:
 
                 <p/>
-                <MembersList />
+
+                {gapi.auth !== undefined ? <MembersList /> : ''}
 
                 <p/>
                 <button onClick={this.props.showDialog} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent add-button">
