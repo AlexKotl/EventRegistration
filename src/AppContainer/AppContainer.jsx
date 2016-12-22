@@ -2,8 +2,11 @@ import React from 'react';
 import 'material-design-lite';
 import 'material-design-lite/material.css';
 import RegistrationForm from './../RegistrationForm/RegistrationForm';
-import EventDescription from './../EventDescription/EventDescription'
+import EventDescription from './../EventDescription/EventDescription';
+import dialogPolyfill from 'dialog-polyfill/dialog-polyfill.js';
+require('dialog-polyfill/dialog-polyfill.css');
 require( './AppContainer.scss');
+
 
 /**
  * Common container
@@ -26,6 +29,7 @@ class AppContainer extends React.Component {
 
     showDialog() {
         var dialog = document.querySelector('#registrationForm');
+        dialogPolyfill.registerDialog(dialog);
         dialog.showModal();
 
         // TODO: add dialogPolyfill
