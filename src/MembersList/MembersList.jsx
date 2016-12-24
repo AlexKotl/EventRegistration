@@ -34,6 +34,7 @@ export default class MembersList extends React.Component {
                     }
                 });
 
+                console.log('data loaded');
                 this.setState({
                     items: AppStore.users,
                     loaded: true

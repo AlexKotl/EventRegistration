@@ -13,6 +13,10 @@ require( './AppContainer.scss');
  */
 class AppContainer extends React.Component {
 
+    state = {
+        gapiLoaded: false
+    };
+
     generateToken() {
         return Math.random().toString(36).substring(10);
     }
@@ -25,14 +29,26 @@ class AppContainer extends React.Component {
         else {
             console.log("User token: ", localStorage.userToken);
         }
+        
+        // run cycle to detect if google api loaded
+        this.checkGapiLoaded();
+    }
+    
+    checkGapiLoaded() {
+        if (typeof gapi === 'object' && typeof gapi.auth === 'object') {
+            this.setState({
+                gapiLoaded: true
+            })
+        }
+        else {
+            setTimeout(::this.checkGapiLoaded, 300);
+        }
     }
 
     showDialog() {
         var dialog = document.querySelector('#registrationForm');
         dialogPolyfill.registerDialog(dialog);
         dialog.showModal();
-
-        // TODO: add dialogPolyfill
     }
 
     render () {
@@ -44,7 +60,12 @@ class AppContainer extends React.Component {
                     <div className="banner"></div>
                 </div>
 
-                <EventDescription showDialog={this.showDialog} />
+                <div className={!this.state.gapiLoaded ? 'loadingIcon' : 'hidden'} >
+                    Loading Google API... <p/>
+                    <div className="mdl-spinner mdl-js-spinner is-active"></div>
+                </div>
+
+                {this.state.gapiLoaded ? <EventDescription showDialog={this.showDialog} /> : ''}
 
                 <dialog className="mdl-dialog" id="registrationForm">
                     <RegistrationForm />
