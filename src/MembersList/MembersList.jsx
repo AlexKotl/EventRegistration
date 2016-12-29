@@ -39,6 +39,11 @@ export default class MembersList extends React.Component {
                     items: AppStore.users,
                     loaded: true
                 });
+            }, () => {
+                // if failed - just mark as loaded
+                this.setState({
+                    loaded: true
+                });
             });
         });
 

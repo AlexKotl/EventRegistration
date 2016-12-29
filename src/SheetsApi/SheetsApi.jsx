@@ -48,7 +48,7 @@ export default class SheetsApi {
         }, console.error);
     }
 
-    getAllData(callback) {
+    getAllData(callback, fail) {
         gapi.client.sheets.spreadsheets.values.get({
             spreadsheetId: this.config.SPREADSHEET_ID,
             range: 'Users!A:F',
@@ -56,6 +56,7 @@ export default class SheetsApi {
             callback(response.result.values);
         }, response => {
             console.log('Error when getting data: ', response.result.error.message);
+            fail();
             return false;
         });
     }
