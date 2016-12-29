@@ -45,7 +45,7 @@ export default class SheetsApi {
                 callback();
             }
 
-        });
+        }, console.error);
     }
 
     getAllData(callback) {

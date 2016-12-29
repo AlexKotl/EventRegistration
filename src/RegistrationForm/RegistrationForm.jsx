@@ -75,7 +75,7 @@ class RegistrationForm extends React.Component {
         });
 
         let sheets = new SheetsApi(() => {
-            console.log('SHEETS READY');
+            console.log('SHEETS API READY');
 
             this.setState({
                 lastUserData: [
@@ -89,7 +89,6 @@ class RegistrationForm extends React.Component {
             });
 
             sheets.authorize(false, () => {
-                console.log('state',this.state);
                 sheets.addRow(this.state.lastUserData, ::this.addSuccess)
             });
 
