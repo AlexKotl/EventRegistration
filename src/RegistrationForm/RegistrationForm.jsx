@@ -54,8 +54,13 @@ class RegistrationForm extends React.Component {
             email: ''
         });
 
+        // get last insert row and update user data
+        const row_no = result.result.updates.updatedRange.match(/Users!A(.*):/i)[1];
+        let user_data = this.state.lastUserData;
+        user_data[10] = row_no;
+
         // update store
-        AppActions.addUserStore(this.state.lastUserData);
+        AppActions.addUserStore(user_data);
         AppStore.trigger('refreshUsers');
 
     }
