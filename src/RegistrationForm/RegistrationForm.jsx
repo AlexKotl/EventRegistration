@@ -31,7 +31,7 @@ class RegistrationForm extends React.Component {
     }
 
     closeDialog() {
-        var dialog = document.querySelector('#registrationForm');
+        var dialog = document.querySelector('#' + (this.props.dialogId ? this.props.dialogId : "registrationForm"));
         dialog.close();
 
         this.setState({

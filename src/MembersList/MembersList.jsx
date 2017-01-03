@@ -84,6 +84,8 @@ export default class MembersList extends React.Component {
 
                 <dialog className="mdl-dialog" id="editForm">
                     <RegistrationForm
+                        dialogId="editForm"
+                        formType="edit"
                         userName={this.state.editUserData.userName}
                         userEmail={this.state.editUserData.email}
                         userPhone={this.state.editUserData.phone}
