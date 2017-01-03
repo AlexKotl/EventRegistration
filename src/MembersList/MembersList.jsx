@@ -1,8 +1,12 @@
 import React from 'react';
 import SheetsApi from './../SheetsApi/SheetsApi.jsx';
 import MembersRow from './MembersRow/MembersRow.jsx';
+import RegistrationForm from './../RegistrationForm/RegistrationForm';
 import AppStore from './../App/AppStore';
 import {AppActions} from './../App/AppActions';
+import dialogPolyfill from 'dialog-polyfill/dialog-polyfill.js';
+require('dialog-polyfill/dialog-polyfill.css');
+
 
 require( './MembersList.scss');
 
@@ -10,15 +14,16 @@ export default class MembersList extends React.Component {
 
     state = {
         items: [],
-        loaded: false
-    }
+        loaded: false,
+        editUserData: {}, // data of current user that editing
+    };
 
     refreshUsers() {
         console.log('setting new store ', AppStore.users);
         this.setState({
             //items:
         })
-    }
+    };
 
     componentDidMount() {
         var api = new SheetsApi(() => {
@@ -54,7 +59,19 @@ export default class MembersList extends React.Component {
     componentWillUnmount() {
         AppStore.bind('refreshUsers', ::this.refreshUsers);
     }
-  
+
+    showForm(data) {
+        console.log('Displaying edit form...', data);
+
+        this.setState({
+            editUserData: data
+        });
+
+        var dialog = document.querySelector('#editForm');
+        dialogPolyfill.registerDialog(dialog);
+        dialog.showModal();
+    }
+
     render() {
 
         let n = 0;
@@ -64,6 +81,14 @@ export default class MembersList extends React.Component {
                 <div className={!this.state.loaded ? 'loadingIcon' : 'hidden'} >
                     <div className="mdl-spinner mdl-js-spinner is-active"></div>
                 </div>
+
+                <dialog className="mdl-dialog" id="editForm">
+                    <RegistrationForm
+                        userName={this.state.editUserData.userName}
+                        userEmail={this.state.editUserData.email}
+                        userPhone={this.state.editUserData.phone}
+                    />
+                </dialog>
 
                 <table className="membersList mdl-data-table mdl-shadow--2dp" style={{width: '100%', display: Object.keys(this.state.items).length>0 ? '' : 'none'}}>
                     <thead>
@@ -83,7 +108,17 @@ export default class MembersList extends React.Component {
                             n++;
                             let el = this.state.items[key];
                             console.log('rendering', key, el);
-                            return <MembersRow key={'member_' + n} num={n} userId={el[0]} userName={el[1]} phone={el[3]}  email={el[2]}  gender={el[4]} colNo={el[10]} />
+                            return <MembersRow
+                                key={'member_' + n}
+                                num={n}
+                                userId={el[0]}
+                                userName={el[1]}
+                                phone={el[3]}
+                                email={el[2]}
+                                gender={el[4]}
+                                colNo={el[10]}
+                                showForm={::this.showForm}
+                            />
                         })}
                     </tbody>
                 </table>
@@ -91,5 +126,5 @@ export default class MembersList extends React.Component {
         )
 
     }
-    
+
 }

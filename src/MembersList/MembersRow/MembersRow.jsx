@@ -27,7 +27,7 @@ export default class MembersRow extends React.Component {
     }
 
     showForm() {
-
+        this.props.showForm(this.props);
     }
 
     render() {
@@ -47,7 +47,7 @@ export default class MembersRow extends React.Component {
                     {this.props.email}
                 </td>
                 <td>
-                    <button className="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" onClick={::this.showForm} title="Edit" style={{'margin-right': 10}}>
+                    <button className="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" onClick={::this.showForm} title="Edit" style={{marginRight: 10}}>
                         <i className="material-icons">edit</i>
                     </button>
                     <button className="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored" onClick={::this.removeUser} title="Remove">

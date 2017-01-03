@@ -6,13 +6,22 @@ require( './RegistrationForm.scss');
 
 
 class RegistrationForm extends React.Component {
-    
+
     state = {
         formCompleted: false,
         loading: false,
-        name: '',
-        email: '',
-        phone: ''
+        name: this.props.userName,
+        email: this.props.userEmail,
+        phone: this.props.userPhone
+    }
+
+    componentWillReceiveProps(nextProps) {
+        console.log('Updating state from props');
+        this.setState({
+            name: nextProps.userName,
+            email: nextProps.userEmail,
+            phone: nextProps.userPhone
+        })
     }
 
     inputChange(event) {
