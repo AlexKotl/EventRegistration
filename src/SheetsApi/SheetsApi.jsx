@@ -77,6 +77,27 @@ export default class SheetsApi {
         });
     }
 
+    editRow(colNo, data, callback) {
+        colNo = parseInt(colNo);
+        const row = [
+            data[1], data[3], data[2]
+        ]
+
+        gapi.client.sheets.spreadsheets.values.update({
+            spreadsheetId: this.config.SPREADSHEET_ID,
+            range: `Users!B${ colNo }:E${ colNo }`,
+            majorDimension: "ROWS",
+            valueInputOption: 'RAW',
+            values: [
+                row
+            ]
+        }).then(response => {
+            callback(response);
+        }, response => {
+            console.log('Error while editing value in Sheets: ', response.result.error.message);
+        });
+    }
+
     deleteRow(colNo, callback) {
         colNo = parseInt(colNo);
 

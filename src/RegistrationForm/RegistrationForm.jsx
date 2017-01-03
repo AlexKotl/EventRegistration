@@ -103,7 +103,14 @@ class RegistrationForm extends React.Component {
             });
 
             sheets.authorize(false, () => {
-                sheets.addRow(this.state.lastUserData, ::this.addSuccess)
+                if (this.props.formType === 'edit') {
+                    console.log('Editing col ',this.props.colNo, 'with data', this.state.lastUserData);
+                    sheets.editRow(this.props.colNo, this.state.lastUserData, ::this.addSuccess)
+                }
+                else {
+                    sheets.addRow(this.state.lastUserData, ::this.addSuccess)
+                }
+
             });
 
         });
@@ -164,7 +171,7 @@ class RegistrationForm extends React.Component {
                                         Close
                                     </button>
                                     <button onClick={::this.submitForm} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent">
-                                        Sign Up for Event!
+                                        {this.props.formType === "edit" ? "Save" : "Sign Up for Event!" }
                                     </button>
                                 </td>
                             </tr>
@@ -177,7 +184,9 @@ class RegistrationForm extends React.Component {
                 </div>
 
                 <div className={this.state.formCompleted ? '' : 'hidden'}>
-                    <h4>You have been successfully registered to even!</h4>
+                    <h4>
+                        {this.props.formType === 'edit' ? "Changes have been saved" : "You have been successfully registered to even!"}
+                    </h4>
                     <div style={{'textAlign':'center', 'margin':'20px'}}>
                         <button onClick={::this.closeDialog} className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
                             Got it! See you on event.
