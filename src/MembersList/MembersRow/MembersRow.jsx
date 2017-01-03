@@ -7,14 +7,14 @@ export default class MembersRow extends React.Component {
     state = {
         processing: false
     };
-    
+
     removeUser() {
         console.log('Removing user ',this.props.userId);
 
         this.setState({
             processing: true
         });
-        
+
         let api = new SheetsApi(() => {
             api.deleteRow(this.props.colNo, () => {
                 AppActions.removeUserStore(this.props.userId);
@@ -24,12 +24,15 @@ export default class MembersRow extends React.Component {
                 })
             });
         });
+    }
+
+    showForm() {
 
     }
 
     render() {
         return (
-           
+
             <tr className={this.state.processing ? 'loading' : ''}>
                 <td>
                     {this.props.num}
@@ -44,6 +47,9 @@ export default class MembersRow extends React.Component {
                     {this.props.email}
                 </td>
                 <td>
+                    <button className="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab" onClick={::this.showForm} title="Edit" style={{'margin-right': 10}}>
+                        <i className="material-icons">edit</i>
+                    </button>
                     <button className="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored" onClick={::this.removeUser} title="Remove">
                         <i className="material-icons">delete</i>
                     </button>
