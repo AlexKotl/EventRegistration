@@ -5,7 +5,6 @@ var iDispatcher = new Dispatcher();
 
 var AppActions = {
     getUsers: function (users) {
-        console.log('AppActions dispatch getUsers');
         iDispatcher.dispatch({
             eventName: 'get-users',
             data: users
@@ -13,7 +12,6 @@ var AppActions = {
     },
 
     addUserStore: function (user) {
-        console.log('Dispatching add-user event');
         iDispatcher.dispatch({
             eventName: 'add-user',
             data: user
@@ -21,7 +19,6 @@ var AppActions = {
     },
 
     editUserStore: function(user) {
-        console.log('Dispatching edit-user event');
         iDispatcher.dispatch({
             eventName: 'edit-user',
             data: user

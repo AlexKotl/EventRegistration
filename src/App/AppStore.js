@@ -5,7 +5,6 @@ var AppStore = new MicroEvent();
 AppStore.users = {};
 
 AppActions.iDispatcher.register(function (payload) {
-    console.log('AppStore register event', payload.eventName);
     switch (payload.eventName) {
         case 'get-users':
             AppStore.users = payload.data;
@@ -16,6 +15,9 @@ AppActions.iDispatcher.register(function (payload) {
             break;
         case 'edit-user':
             console.log('Users BEFORE: ',AppStore.users);
+            // save user col number from old row
+            payload.data[10] = AppStore.users[payload.data[0]][10];
+            
             AppStore.users[payload.data[0]] = payload.data;
             console.log('Users AFTER: ',AppStore.users);
             break;
