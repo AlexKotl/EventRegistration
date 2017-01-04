@@ -19,14 +19,22 @@ var AppActions = {
             data: user
         });
     },
-    
+
+    editUserStore: function(user) {
+        console.log('Dispatching edit-user event');
+        iDispatcher.dispatch({
+            eventName: 'edit-user',
+            data: user
+        });
+    },
+
     removeUserStore: function(user_id) {
         iDispatcher.dispatch({
             eventName: 'remove-user',
             data: user_id
         })
     }
-    
+
 };
 
 module.exports.AppActions = AppActions;

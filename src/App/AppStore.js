@@ -13,7 +13,11 @@ AppActions.iDispatcher.register(function (payload) {
             break;
         case 'add-user':
             AppStore.users[payload.data[0]] = payload.data;
-            //AppStore.trigger('refreshComments');
+            break;
+        case 'edit-user':
+            console.log('Users BEFORE: ',AppStore.users);
+            AppStore.users[payload.data[0]] = payload.data;
+            console.log('Users AFTER: ',AppStore.users);
             break;
         case 'remove-user':
             delete AppStore.users[payload.data];

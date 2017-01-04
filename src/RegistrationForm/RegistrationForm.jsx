@@ -74,6 +74,24 @@ class RegistrationForm extends React.Component {
 
     }
 
+    editSuccess(result) {
+        console.log('User successfully edited. ', result);
+        console.log('User data: ',this.state.lastUserData);
+
+        // clean state
+        this.setState({
+            formCompleted: true,
+            loading: false,
+            name: '',
+            phone: '',
+            email: ''
+        });
+
+        // update store
+        AppActions.editUserStore(this.state.lastUserData);
+        AppStore.trigger('refreshUsers');
+    }
+
     generateId() {
         return Math.random().toString(36).substring(16);
     }
@@ -93,7 +111,7 @@ class RegistrationForm extends React.Component {
 
             this.setState({
                 lastUserData: [
-                    this.generateId(),
+                    this.props.userId || this.generateId(),
                     this.state.name,
                     this.state.phone,
                     this.state.email,
@@ -105,7 +123,7 @@ class RegistrationForm extends React.Component {
             sheets.authorize(false, () => {
                 if (this.props.formType === 'edit') {
                     console.log('Editing col ',this.props.colNo, 'with data', this.state.lastUserData);
-                    sheets.editRow(this.props.colNo, this.state.lastUserData, ::this.addSuccess)
+                    sheets.editRow(this.props.colNo, this.state.lastUserData, ::this.editSuccess)
                 }
                 else {
                     sheets.addRow(this.state.lastUserData, ::this.addSuccess)

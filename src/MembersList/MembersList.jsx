@@ -86,6 +86,7 @@ export default class MembersList extends React.Component {
                     <RegistrationForm
                         dialogId="editForm"
                         formType="edit"
+                        userId={this.state.editUserData.userId}
                         colNo={this.state.editUserData.colNo}
                         userName={this.state.editUserData.userName}
                         userEmail={this.state.editUserData.email}
