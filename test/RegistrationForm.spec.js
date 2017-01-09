@@ -1,11 +1,11 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
+import {mount, shallow} from 'enzyme';
 import {expect} from 'chai';
 
 import RegistrationForm from '../src/RegistrationForm/RegistrationForm.jsx';
 
 describe('<RegistrationForm />', function() {
-    const wrapper = shallow(<RegistrationForm/>);
+    const wrapper = mount(<RegistrationForm/>);
 
     it ('should have all inputs', function() {
         expect(wrapper.find('input[type="text"]')).to.have.length(3);

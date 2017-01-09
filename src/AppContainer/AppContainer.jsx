@@ -1,8 +1,8 @@
 import React from 'react';
 import 'material-design-lite';
 import 'material-design-lite/material.css';
-import RegistrationForm from './../RegistrationForm/RegistrationForm';
-import EventDescription from './../EventDescription/EventDescription';
+import RegistrationForm from './../RegistrationForm/RegistrationForm.jsx';
+import EventDescription from './../EventDescription/EventDescription.jsx';
 import dialogPolyfill from 'dialog-polyfill/dialog-polyfill.js';
 require('dialog-polyfill/dialog-polyfill.css');
 require( './AppContainer.scss');
@@ -22,18 +22,18 @@ class AppContainer extends React.Component {
     }
 
     componentDidMount() {
-        if (localStorage.userToken === undefined) {
-            localStorage.userToken = this.generateToken();
+        if (window.localStorage && window.localStorage.userToken === undefined) {
+            window.localStorage.userToken = this.generateToken();
             console.log('set new token');
         }
         else {
-            console.log("User token: ", localStorage.userToken);
+            console.log("User token: ", window.localStorage && window.localStorage.userToken);
         }
-        
+
         // run cycle to detect if google api loaded
         this.checkGapiLoaded();
     }
-    
+
     checkGapiLoaded() {
         if (typeof gapi === 'object' && typeof gapi.auth === 'object') {
             this.setState({
