@@ -2,7 +2,7 @@ import React from 'react';
 import SheetsApi from './../SheetsApi/SheetsApi.jsx';
 import {AppActions} from './../App/AppActions';
 import AppStore from './../App/AppStore';
-require( './RegistrationForm.scss');
+//require( './RegistrationForm.scss');
 
 
 class RegistrationForm extends React.Component {
