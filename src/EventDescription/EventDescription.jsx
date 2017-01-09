@@ -14,7 +14,7 @@ export default class EventDescription extends React.Component {
 
                 <p/><b>GoIT</b> is launching new super event. And most important thing in that event is <b>online registration</b>. Good news! You are one who can test it right now.
                 <p/>Never before signing up to event was such simple, fast and user friendly!
-                <p/>SPI (Single Page Application) based on React make life easier - no page reload, no extra traffic, no delays. Just click and get result. That's just an awesomeness!
+                <p/>SPI (Single Page Application) based on React make life easier - no page reload, no extra traffic, no delays. Just click and get result. Thats just an awesomeness!
                 <p/>With connection of <b>Google Spreadsheets API</b> this app brings more clarity and simplicity of support.
 
                 <div className="logos">
