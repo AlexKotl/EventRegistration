@@ -57,7 +57,7 @@ export default class EventDescription extends React.Component {
                 <MembersList />
 
                 <p/>
-                <button onClick={this.props.showDialog} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent add-button">
+                <button onClick={this.props.showDialog} className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent add-button" id="registerButton">
                     Sign Up for Event!
                 </button>
 

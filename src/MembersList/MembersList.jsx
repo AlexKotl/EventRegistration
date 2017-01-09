@@ -1,9 +1,9 @@
 import React from 'react';
 import SheetsApi from './../SheetsApi/SheetsApi.jsx';
 import MembersRow from './MembersRow/MembersRow.jsx';
-import RegistrationForm from './../RegistrationForm/RegistrationForm';
-import AppStore from './../App/AppStore';
-import {AppActions} from './../App/AppActions';
+import RegistrationForm from './../RegistrationForm/RegistrationForm.jsx';
+import AppStore from './../App/AppStore.js';
+import {AppActions} from './../App/AppActions.js';
 import dialogPolyfill from 'dialog-polyfill/dialog-polyfill.js';
 require('dialog-polyfill/dialog-polyfill.css');
 
