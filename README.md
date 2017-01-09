@@ -1,12 +1,13 @@
 # Register to Event App
 
-This App allows you to display form for registration, store data in Google Spreadsheets.
+This App allows you to display form for registration, store data in Google Spreadsheets, delete and edit rows.
 
 It is based on:
 - React
 - Flux
 - Google Sheets API
 - SASS
+- Mocha + Chai tests
 
 # Screenshots
 
